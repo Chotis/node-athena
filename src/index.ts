@@ -14,6 +14,7 @@ export interface AwsConfig {
   sessionToken?: string
 }
 export type S3Instance = object
+export type AthenaInstance = object
 
 export * from './lib/client'
 
@@ -26,6 +27,7 @@ export function createClient(
   clientConfig: AthenaClientConfig,
   awsConfig: AwsConfig,
   s3Instance: S3Instance,
+  athenaInstance: AthenaInstance,
 ) {
   if (
     clientConfig === undefined ||
@@ -45,9 +47,11 @@ export function createClient(
   if (s3Instance === undefined) {
     s3Instance = new aws.S3({ apiVersion: '2006-03-01' })
   }
+  if (athenaInstance === undefined) {
+    athenaInstance = new aws.Athena({ apiVersion: '2017-05-18' })
+  }
 
   aws.config.update(awsConfig)
-  const athena = new aws.Athena({ apiVersion: '2017-05-18' })
-  const request = new AthenaRequest(athena, s3Instance)
+  const request = new AthenaRequest(athenaInstance, s3Instance)
   return new AthenaClient(request, clientConfig)
 }
