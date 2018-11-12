@@ -1,4 +1,5 @@
 import * as aws from 'aws-sdk'
+import { type } from 'os'
 import {
   AthenaClient,
   AthenaClientConfig,
@@ -12,6 +13,7 @@ export interface AwsConfig {
   secretAccessKey?: string
   sessionToken?: string
 }
+export type S3Instance = object
 
 export * from './lib/client'
 
@@ -23,6 +25,7 @@ export default class Athena {
 export function createClient(
   clientConfig: AthenaClientConfig,
   awsConfig: AwsConfig,
+  s3Instance: S3Instance,
 ) {
   if (
     clientConfig === undefined ||
@@ -39,10 +42,12 @@ export function createClient(
   ) {
     throw new Error('region required')
   }
+  if (s3Instance === undefined) {
+    s3Instance = new aws.S3({ apiVersion: '2006-03-01' })
+  }
 
   aws.config.update(awsConfig)
   const athena = new aws.Athena({ apiVersion: '2017-05-18' })
-  const s3 = new aws.S3({ apiVersion: '2006-03-01' })
-  const request = new AthenaRequest(athena, s3)
+  const request = new AthenaRequest(athena, s3Instance)
   return new AthenaClient(request, clientConfig)
 }

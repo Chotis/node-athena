@@ -5,9 +5,10 @@ export interface AwsConfig {
     secretAccessKey?: string;
     sessionToken?: string;
 }
+export declare type S3Instance = object;
 export * from './lib/client';
 export default class Athena {
     static createClient: typeof createClient;
     static setConcurrentExecMax: typeof setConcurrentExecMax;
 }
-export declare function createClient(clientConfig: AthenaClientConfig, awsConfig: AwsConfig): AthenaClient;
+export declare function createClient(clientConfig: AthenaClientConfig, awsConfig: AwsConfig, s3Instance: S3Instance): AthenaClient;
